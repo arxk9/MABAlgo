@@ -15,11 +15,12 @@ class TSStruct:
         self.UserArmMean[articlePicked_id] = (self.UserArmMean[articlePicked_id]*self.UserArmTrials[articlePicked_id] + click) / (self.UserArmTrials[articlePicked_id]+1)
         self.UserArmTrials[articlePicked_id] += 1
 
-        self.UserArmHistory[articlePicked_id].append(click) # may change this
+        self.UserArmHistory[articlePicked_id].append(click)
         
-        variance = (1 / self.UserArmPriors[articlePicked_id][1] ** -2 + self.UserArmTrials[articlePicked_id]) ** -1
+        # variance = (self.UserArmPriors[articlePicked_id][1] ** -2 + self.UserArmTrials[articlePicked_id]) ** -1
         self.UserArmPriors[articlePicked_id][0] = sum(self.UserArmHistory[articlePicked_id]) / self.UserArmTrials[articlePicked_id]
-        self.UserArmPriors[articlePicked_id][1] = np.sqrt(variance)
+        # self.UserArmPriors[articlePicked_id][1] = np.sqrt(variance)
+        self.UserArmPriors[articlePicked_id][1] = 1 / self.UserArmTrials[articlePicked_id]
 
         self.time += 1
 

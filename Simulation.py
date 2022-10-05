@@ -17,6 +17,7 @@ from UCBMultiArmedBandit import UCBMultiArmedBandit
 from TSMultiArmedBandit import TSMultiArmedBandit
 from PHEMultiArmedBandit import PHEMultiArmedBandit
 from LinUCBBandit import LinUCBBandit
+from LinTSBandit import LinTSBandit
 
 class simulateOnlineData(object):
 	def __init__(self, context_dimension, testing_iterations, plot, articles,
@@ -26,7 +27,7 @@ class simulateOnlineData(object):
 
 		self.context_dimension = context_dimension
 		self.testing_iterations = testing_iterations
-		self.batchSize = 1
+		self.batchSize = 200
 
 		self.plot = plot
 
@@ -195,8 +196,9 @@ if __name__ == '__main__':
 
 	testing_iterations = 15000
 	NoiseScale = 0.1  # standard deviation of Gaussian noise
-	n_articles = 25
-	n_users = 10
+	scale = 1
+	n_articles = 25 * scale
+	n_users = 10 * scale
 	poolArticleSize = None
 
 	if actionset == "basis_vector":
@@ -221,12 +223,15 @@ if __name__ == '__main__':
 	## Initiate Bandit Algorithms ##
 	algorithms = {}
 
-	# algorithms['EpsilonGreedyLinearBandit'] = EpsilonGreedyLinearBandit(dimension=context_dimension, lambda_=0.1, epsilon=None)
-	algorithms['EpsilonGreedyMultiArmedBandit'] = EpsilonGreedyMultiArmedBandit(num_arm=n_articles, epsilon=None)
-	# algorithms['UCBMultiArmedBandit'] = UCBMultiArmedBandit(num_arm=n_articles)
-	# algorithms['TSMultiArmedBandit'] = TSMultiArmedBandit(num_arm=n_articles)
-	algorithms['PHEMultiArmedBandit'] = PHEMultiArmedBandit(num_arm=n_articles)
-	# algorithms['LinUCBBandit'] = LinUCBBandit(dimension=context_dimension, lambda_=0.1)
+	if actionset == "basis_vector":
+		algorithms['EpsilonGreedyMultiArmedBandit'] = EpsilonGreedyMultiArmedBandit(num_arm=n_articles, epsilon=None)
+		algorithms['UCBMultiArmedBandit'] = UCBMultiArmedBandit(num_arm=n_articles)
+		algorithms['TSMultiArmedBandit'] = TSMultiArmedBandit(num_arm=n_articles)
+		# algorithms['PHEMultiArmedBandit'] = PHEMultiArmedBandit(num_arm=n_articles)
+	else:
+		algorithms['EpsilonGreedyLinearBandit'] = EpsilonGreedyLinearBandit(dimension=context_dimension, lambda_=0.1, epsilon=None)
+		algorithms['LinUCBBandit'] = LinUCBBandit(dimension=context_dimension, lambda_=0.1)
+		algorithms['LinTSBandit'] = LinTSBandit(dimension=context_dimension, lambda_=0.1)
 
 	## Run Simulation ##
 	print("Starting for ", simExperiment.simulation_signature)

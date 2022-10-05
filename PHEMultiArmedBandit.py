@@ -5,36 +5,32 @@ class PHEStruct:
     def __init__(self, num_arm, a):
         self.d = num_arm
         self.a = a
-        # self.UserArmMean = np.zeros(self.d)
-        # self.UserArmTrials = np.zeros(self.d)
-        self.UserArmConfidence = np.zeros(self.d)
-        self.UserArmHistory = [[] for _ in range(self.d)]
+        self.UserArmMean = np.zeros(self.d)
+        self.UserArmTrials = np.zeros(self.d, dtype=int)
         self.UserArmTheta = np.zeros(self.d)
 
         self.time = 0
 
     def updateParameters(self, articlePicked_id, click):
-        # self.UserArmMean[articlePicked_id] = (self.UserArmMean[articlePicked_id]*self.UserArmTrials[articlePicked_id] + click) / (self.UserArmTrials[articlePicked_id]+1)
-        # self.UserArmTrials[articlePicked_id] += 1
-        self.UserArmHistory[articlePicked_id].append(click)
+        self.UserArmMean[articlePicked_id] = (self.UserArmMean[articlePicked_id]*self.UserArmTrials[articlePicked_id] + click) / (self.UserArmTrials[articlePicked_id]+1)
+        self.UserArmTrials[articlePicked_id] += 1
 
         self.time += 1
 
     def getTheta(self):
-        return self.UserArmTheta
+        return self.UserArmMean
 
     def decide(self, pool_articles):
-        # self.updateConfidences(pool_articles)
         maxPTA = float('-inf')
         articlePicked = None
 
         for article in pool_articles:
-            n = len(self.UserArmHistory[article.id])
-            self.UserArmConfidence[article.id] = (np.sqrt(2 * np.log(self.time) / n) 
-                                                    if n != 0 else float('inf'))
-            self.UserArmTheta[article.id] = ((sum(self.UserArmHistory[article.id]) + sum([1 for _ in range(self.a * n) if random() < 0.5])) / (n * (1 + self.a))
-                                                    if n != 0 else float('inf'))
-            article_pta = self.UserArmTheta[article.id] + self.UserArmConfidence[article.id]
+            n = self.UserArmTrials[article.id]
+            if n == 0:
+                return article
+            confidence = np.sqrt(2 * np.log(self.time) / n)
+            estimation = (self.UserArmMean[article.id] * n + sum([1 for _ in range(self.a * n) if random() < 0.5])) / (n * (1 + self.a))
+            article_pta = estimation + confidence
             # pick article with highest Prob
             if maxPTA < article_pta:
                 articlePicked = article
@@ -43,7 +39,7 @@ class PHEStruct:
         return articlePicked
 
 class PHEMultiArmedBandit:
-    def __init__(self, num_arm, a=4):
+    def __init__(self, num_arm, a=3):
         self.users = {}
         self.num_arm = num_arm
         self.a = a

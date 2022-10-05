@@ -30,7 +30,7 @@ class LinUCBStruct:
 
         for article in pool_articles:
             # article_pta = np.dot(self.UserTheta, article.featureVector) + self.alpha * np.sqrt(np.dot(np.dot(np.transpose(article.featureVector), self.AInv), article.featureVector))
-            article_pta = np.dot(self.UserTheta, article.featureVector) + self.alpha * np.linalg.norm(self.AInv * article.featureVector)
+            article_pta = np.dot(self.UserTheta, article.featureVector) + self.alpha * np.sqrt(np.dot(article.featureVector, self.AInv @ article.featureVector))
             # pick article with highest Prob
             if maxPTA < article_pta:
                 articlePicked = article
@@ -39,7 +39,7 @@ class LinUCBStruct:
         return articlePicked
 
 class LinUCBBandit:
-    def __init__(self, dimension, lambda_, alpha=0.2):
+    def __init__(self, dimension, lambda_, alpha=0.5):
         self.users = {}
         self.dimension = dimension
         self.lambda_ = lambda_

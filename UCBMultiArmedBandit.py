@@ -31,7 +31,9 @@ class UCBStruct:
 
         for article in pool_articles:
             # article_pta = self.UserArmMean[article.id] + self.UserArmConfidence[article.id]
-            article_pta = self.UserArmMean[article.id] + np.sqrt(2 * np.log(self.time) / self.UserArmTrials[article.id]) if self.UserArmTrials[article.id] != 0 else float('inf')
+            if self.UserArmTrials[article.id] == 0:
+                return article
+            article_pta = self.UserArmMean[article.id] + np.sqrt(2 * np.log(self.time) / self.UserArmTrials[article.id])
             # pick article with highest Prob
             if maxPTA < article_pta:
                 articlePicked = article
