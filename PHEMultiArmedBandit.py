@@ -1,5 +1,6 @@
 import numpy as np
 from random import random
+from math import ceil
 
 class PHEStruct:
     def __init__(self, num_arm, a):
@@ -7,7 +8,6 @@ class PHEStruct:
         self.a = a
         self.UserArmMean = np.zeros(self.d)
         self.UserArmTrials = np.zeros(self.d, dtype=int)
-        self.UserArmTheta = np.zeros(self.d)
 
         self.time = 0
 
@@ -28,9 +28,7 @@ class PHEStruct:
             n = self.UserArmTrials[article.id]
             if n == 0:
                 return article
-            confidence = np.sqrt(2 * np.log(self.time) / n)
-            estimation = (self.UserArmMean[article.id] * n + sum([1 for _ in range(self.a * n) if random() < 0.5])) / (n * (1 + self.a))
-            article_pta = estimation + confidence
+            article_pta = (self.UserArmMean[article.id] * n + sum([1 for _ in range(ceil(self.a * n)) if random() < 0.5])) / ceil(n * (1 + self.a))
             # pick article with highest Prob
             if maxPTA < article_pta:
                 articlePicked = article
@@ -39,7 +37,7 @@ class PHEStruct:
         return articlePicked
 
 class PHEMultiArmedBandit:
-    def __init__(self, num_arm, a=3):
+    def __init__(self, num_arm, a=0.5):
         self.users = {}
         self.num_arm = num_arm
         self.a = a

@@ -15,7 +15,7 @@ class LinUCBStruct:
         self.A += np.outer(articlePicked_FeatureVector, articlePicked_FeatureVector)
         self.b += articlePicked_FeatureVector * click
         self.AInv = np.linalg.inv(self.A)
-        self.UserTheta = np.dot(self.AInv, self.b)
+        self.UserTheta = self.AInv @ self.b
         self.time += 1
 
     def getTheta(self):
@@ -29,7 +29,6 @@ class LinUCBStruct:
         articlePicked = None
 
         for article in pool_articles:
-            # article_pta = np.dot(self.UserTheta, article.featureVector) + self.alpha * np.sqrt(np.dot(np.dot(np.transpose(article.featureVector), self.AInv), article.featureVector))
             article_pta = np.dot(self.UserTheta, article.featureVector) + self.alpha * np.sqrt(np.dot(article.featureVector, self.AInv @ article.featureVector))
             # pick article with highest Prob
             if maxPTA < article_pta:

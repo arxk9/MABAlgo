@@ -6,6 +6,7 @@ class UCBStruct:
 
         self.UserArmMean = np.zeros(self.d)
         self.UserArmTrials = np.zeros(self.d)
+        self.confidence_scale = 0.25
         # self.UserArmConfidence = np.zeros(self.d)
 
         self.time = 0
@@ -33,7 +34,7 @@ class UCBStruct:
             # article_pta = self.UserArmMean[article.id] + self.UserArmConfidence[article.id]
             if self.UserArmTrials[article.id] == 0:
                 return article
-            article_pta = self.UserArmMean[article.id] + np.sqrt(2 * np.log(self.time) / self.UserArmTrials[article.id])
+            article_pta = self.UserArmMean[article.id] + np.sqrt(2 * np.log(self.time) / self.UserArmTrials[article.id]) * self.confidence_scale
             # pick article with highest Prob
             if maxPTA < article_pta:
                 articlePicked = article

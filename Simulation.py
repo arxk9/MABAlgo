@@ -18,6 +18,7 @@ from TSMultiArmedBandit import TSMultiArmedBandit
 from PHEMultiArmedBandit import PHEMultiArmedBandit
 from LinUCBBandit import LinUCBBandit
 from LinTSBandit import LinTSBandit
+from LinPHEBandit import LinPHEBandit
 
 class simulateOnlineData(object):
 	def __init__(self, context_dimension, testing_iterations, plot, articles,
@@ -194,11 +195,11 @@ if __name__ == '__main__':
 	else:
 		actionset = "basis_vector"  # "basis_vector" or "random"
 
-	testing_iterations = 15000
+	testing_iterations = 1500
 	NoiseScale = 0.1  # standard deviation of Gaussian noise
-	scale = 1
-	n_articles = 25 * scale
-	n_users = 10 * scale
+	article_scale = 1
+	n_articles = int(25 * article_scale)
+	n_users = 10
 	poolArticleSize = None
 
 	if actionset == "basis_vector":
@@ -227,11 +228,12 @@ if __name__ == '__main__':
 		algorithms['EpsilonGreedyMultiArmedBandit'] = EpsilonGreedyMultiArmedBandit(num_arm=n_articles, epsilon=None)
 		algorithms['UCBMultiArmedBandit'] = UCBMultiArmedBandit(num_arm=n_articles)
 		algorithms['TSMultiArmedBandit'] = TSMultiArmedBandit(num_arm=n_articles)
-		# algorithms['PHEMultiArmedBandit'] = PHEMultiArmedBandit(num_arm=n_articles)
+		algorithms['PHEMultiArmedBandit'] = PHEMultiArmedBandit(num_arm=n_articles)
 	else:
 		algorithms['EpsilonGreedyLinearBandit'] = EpsilonGreedyLinearBandit(dimension=context_dimension, lambda_=0.1, epsilon=None)
 		algorithms['LinUCBBandit'] = LinUCBBandit(dimension=context_dimension, lambda_=0.1)
-		algorithms['LinTSBandit'] = LinTSBandit(dimension=context_dimension, lambda_=0.1)
+		# algorithms['LinTSBandit'] = LinTSBandit(dimension=context_dimension, lambda_=0.1, sigma=NoiseScale)
+		algorithms['LinPHEBandit'] = LinPHEBandit(dimension=context_dimension, lambda_=0.1)
 
 	## Run Simulation ##
 	print("Starting for ", simExperiment.simulation_signature)
