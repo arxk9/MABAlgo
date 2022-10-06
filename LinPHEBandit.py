@@ -13,6 +13,7 @@ class LinPHEStruct:
         self.AInv = np.linalg.inv(self.A)
         self.UserTheta = np.zeros(self.d)
         self.featureHistory = dict()
+        self.seen = set()
         self.time = 0
 
     def updateParameters(self, articlePicked_FeatureVector, click):
@@ -26,7 +27,7 @@ class LinPHEStruct:
         self.bsum += articlePicked_FeatureVector * click
         self.b = self.bsum
         for thing in [self.featureHistory[s] for s in self.featureHistory]:
-            perturbation = sum([1 for _ in range(ceil(self.a * thing[1])) if random() < 0.5])
+            perturbation = np.random.binomial(ceil(self.a * thing[1]), 0.5)
             self.b += thing[0] * perturbation
         self.AInv = np.linalg.inv(self.A)
         self.UserTheta = self.AInv @ self.b
@@ -39,12 +40,13 @@ class LinPHEStruct:
         return self.A
 
     def decide(self, pool_articles):
-        if self.time < self.d:
-            return pool_articles[self.time]
         maxPTA = float('-inf')
         articlePicked = None
 
         for article in pool_articles:
+            if article not in self.seen:
+                self.seen.add(article)
+                return article
             article_pta = np.dot(self.UserTheta, article.featureVector)
             # pick article with highest Prob
             if maxPTA < article_pta:

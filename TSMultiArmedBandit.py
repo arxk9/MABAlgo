@@ -3,24 +3,13 @@ import numpy as np
 class TSStruct:
     def __init__(self, num_arm):
         self.d = num_arm
-        sigma_0 = 5000
-        self.UserArmPriors = [[0, sigma_0] for _ in range(self.d)]
-
         self.UserArmMean = np.zeros(self.d)
         self.UserArmTrials = np.zeros(self.d)
-        self.UserArmHistory = [[] for _ in range(self.d)]
         self.time = 0
 
     def updateParameters(self, articlePicked_id, click):
         self.UserArmMean[articlePicked_id] = (self.UserArmMean[articlePicked_id]*self.UserArmTrials[articlePicked_id] + click) / (self.UserArmTrials[articlePicked_id]+1)
         self.UserArmTrials[articlePicked_id] += 1
-
-        self.UserArmHistory[articlePicked_id].append(click)
-        
-        # variance = (self.UserArmPriors[articlePicked_id][1] ** -2 + self.UserArmTrials[articlePicked_id]) ** -1
-        self.UserArmPriors[articlePicked_id][0] = sum(self.UserArmHistory[articlePicked_id]) / self.UserArmTrials[articlePicked_id]
-        # self.UserArmPriors[articlePicked_id][1] = np.sqrt(variance)
-        self.UserArmPriors[articlePicked_id][1] = 1 / self.UserArmTrials[articlePicked_id]
 
         self.time += 1
 
@@ -32,7 +21,9 @@ class TSStruct:
         articlePicked = None
 
         for article in pool_articles:
-            article_pta = np.random.normal(*self.UserArmPriors[article.id])
+            if self.UserArmTrials[article.id] == 0:
+                return article
+            article_pta = np.random.normal(self.UserArmMean[article.id], self.UserArmTrials[article.id] ** -1)
             # pick article with highest Prob
             if maxPTA < article_pta:
                 articlePicked = article

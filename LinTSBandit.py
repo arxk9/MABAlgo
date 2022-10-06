@@ -16,11 +16,11 @@ class LinTSStruct:
         self.A += self.sigma ** -2 * np.outer(articlePicked_FeatureVector, articlePicked_FeatureVector)
         self.b += self.sigma ** -2 * articlePicked_FeatureVector * click
         self.AInv = np.linalg.inv(self.A)
-        self.UserTheta = self.AInv @ self.b
+        self.UserTheta = self.multivariate_normal(self.AInv @ self.b, self.AInv)
         self.time += 1
 
     def getTheta(self):
-        return self.UserTheta
+        return self.AInv @ self.b
 
     def getA(self):
         return self.A
@@ -33,9 +33,8 @@ class LinTSStruct:
         articlePicked = None
 
         for article in pool_articles:
-            # article_pta = np.dot(self.UserTheta, article.featureVector) + self.alpha * np.sqrt(np.dot(np.dot(np.transpose(article.featureVector), self.AInv), article.featureVector))
             # article_pta = np.dot(np.random.multivariate_normal(self.UserTheta, self.AInv), article.featureVector)
-            article_pta = np.dot(self.multivariate_normal(self.UserTheta, self.AInv), article.featureVector)
+            article_pta = np.dot(self.UserTheta, article.featureVector)
             # pick article with highest Prob
             if maxPTA < article_pta:
                 articlePicked = article

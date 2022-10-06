@@ -195,10 +195,9 @@ if __name__ == '__main__':
 	else:
 		actionset = "basis_vector"  # "basis_vector" or "random"
 
-	testing_iterations = 1500
-	NoiseScale = 0.1  # standard deviation of Gaussian noise
-	article_scale = 1
-	n_articles = int(25 * article_scale)
+	testing_iterations = 15000
+	NoiseScale = 1  # standard deviation of Gaussian noise
+	n_articles = 25 # 25
 	n_users = 10
 	poolArticleSize = None
 
@@ -232,8 +231,8 @@ if __name__ == '__main__':
 	else:
 		algorithms['EpsilonGreedyLinearBandit'] = EpsilonGreedyLinearBandit(dimension=context_dimension, lambda_=0.1, epsilon=None)
 		algorithms['LinUCBBandit'] = LinUCBBandit(dimension=context_dimension, lambda_=0.1)
-		# algorithms['LinTSBandit'] = LinTSBandit(dimension=context_dimension, lambda_=0.1, sigma=NoiseScale)
-		algorithms['LinPHEBandit'] = LinPHEBandit(dimension=context_dimension, lambda_=0.1)
+		algorithms['LinTSBandit'] = LinTSBandit(dimension=context_dimension, lambda_=0.1, sigma=NoiseScale)
+		# algorithms['LinPHEBandit'] = LinPHEBandit(dimension=context_dimension, lambda_=0.1)
 
 	## Run Simulation ##
 	print("Starting for ", simExperiment.simulation_signature)

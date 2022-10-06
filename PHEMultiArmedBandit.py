@@ -28,7 +28,7 @@ class PHEStruct:
             n = self.UserArmTrials[article.id]
             if n == 0:
                 return article
-            article_pta = (self.UserArmMean[article.id] * n + sum([1 for _ in range(ceil(self.a * n)) if random() < 0.5])) / ceil(n * (1 + self.a))
+            article_pta = (self.UserArmMean[article.id] * n + np.random.binomial(ceil(self.a * n), 0.5)) / ceil(n * (1 + self.a))
             # pick article with highest Prob
             if maxPTA < article_pta:
                 articlePicked = article

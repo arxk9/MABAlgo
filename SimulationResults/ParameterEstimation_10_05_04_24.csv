@@ -1,0 +1,2 @@
+Time(Iteration),EpsilonGreedyLinearBanditTheta,LinUCBBanditTheta,LinTSBanditTheta,LinPHEBanditTheta
+0,0.9779320225760667,0.9670990166517855,16.406410791982683,1.0222626319007162
